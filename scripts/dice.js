@@ -93,13 +93,15 @@ function distTest(roll, samples = 10000) {
     if (isNull(roll)) {
         return "Provide a roll please :)";
     }
+
+    // Generate data - make the provided roll a number of times equal to sample size, then sort
     let rolls = [];
     for (let i = 0; i < samples; i++) {
         rolls.push(rollDice(roll));
     }
     rolls.sort();
 
-
+    // Rearrange data into a frequency list: result -> frequency
     let a = [];
     let b = [];
     let previous = null;
@@ -113,11 +115,12 @@ function distTest(roll, samples = 10000) {
         previous = rolls[i];
     }
 
+    // Reverse sort?
     results.sort(function(a, b) {
         return a[0] - b[0];
     });
 
-    // Get normalized data
+    // For the graph, we want to also have our frequencies as percentages (highest frequency is 1.0).
     let magnitude = 0;
     for (let i = 0; i < results.length; i++) {
         magnitude = results[i][1] > magnitude ? results[i][1] : magnitude;
@@ -133,13 +136,14 @@ function distTest(roll, samples = 10000) {
         samples: samples
     }
 
+    // Do this for some reason, I guess?
     for (let i = 0; i < results.length; i++) {
         let percent = Math.round(results[i][1] / samples * 10000, 5) / 100;
         let normalized = results[i][2];
     }
 
     
-
+    console.log(magnitude);
     return test;
 }
 
@@ -197,7 +201,6 @@ function rollDice(roll) {
     total = 0;
     let rolls = [];
 
-    
     for (let i = 0; i < num; i++) {
         rolls.push(randomInt(1, die));
     }
@@ -206,15 +209,14 @@ function rollDice(roll) {
         if (0 < keep && keep < num) {            
             // Keep dice
             rolls.sort(function (a, b) {
-                return (a > b);
+                return (a - b);
             });
         } else if (-num < keep && keep < 0) {
             // Drop dice
             rolls.sort(function (a, b) {
-                return (a < b);
+                return (b - a);
             });
         }
-
         rolls = rolls.slice(num - Math.abs(keep));
     }
 
