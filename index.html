@@ -1,52 +1,65 @@
 <html>
+
     <head>
         <title>Dice Roller</title>
         <link rel="stylesheet" type="text/css" href="styles/reset.css">
-        <link rel="stylesheet" type="text/css" href="styles/styles.css">        
+        <link rel="stylesheet" type="text/css" href="styles/styles.css">
         <script src="scripts/dice.js"></script>
     </head>
+
     <body>
         <header>
             <h1>Seakibble's Dice Roller</h1>
         </header>
         <div class="container">
-        
+
             <div class="dice_box box">
                 <h2>Dice Box</h2>
                 <div class="dice_box__row">
-                    <input id="dice_input" value="1d20"/>
+                    <input id="dice_input" value="1d20" />
                     <button class="button" onclick="roll()">Roll</button>
                     <button class="button" onclick="roll(true)">Graph</button>
                 </div>
                 <div class="dice_box__row">
-                    <button class="button" id="dieBtn-1" data-roll="1d4" onclick='makeRoll(this.dataset.roll)'>d4</button>
-                    <button class="button" id="dieBtn-2" data-roll="1d6" onclick='makeRoll(this.dataset.roll)'>d6</button>
-                    <button class="button" id="dieBtn-3" data-roll="1d8" onclick='makeRoll(this.dataset.roll)'>d8</button>
-                    <button class="button" id="dieBtn-4" data-roll="1d10" onclick='makeRoll(this.dataset.roll)'>d10</button>
-                    <button class="button" id="dieBtn-5" data-roll="1d12" onclick='makeRoll(this.dataset.roll)'>d12</button>
+                    <button class="button" id="dieBtn-1" data-roll="1d4"
+                        onclick='makeRoll(this.dataset.roll)'>d4</button>
+                    <button class="button" id="dieBtn-2" data-roll="1d6"
+                        onclick='makeRoll(this.dataset.roll)'>d6</button>
+                    <button class="button" id="dieBtn-3" data-roll="1d8"
+                        onclick='makeRoll(this.dataset.roll)'>d8</button>
+                    <button class="button" id="dieBtn-4" data-roll="1d10"
+                        onclick='makeRoll(this.dataset.roll)'>d10</button>
+                    <button class="button" id="dieBtn-5" data-roll="1d12"
+                        onclick='makeRoll(this.dataset.roll)'>d12</button>
                 </div>
                 <div class="dice_box__row">
-                    <button class="button" id="dieBtn-6" data-roll="1d20" onclick='makeRoll(this.dataset.roll)'>d20</button>
-                    <button class="button" id="dieBtn-6" data-roll="2d20k1" onclick='makeRoll(this.dataset.roll)'>Advantage</button>
-                    <button class="button" id="dieBtn-6" data-roll="2d20k-1" onclick='makeRoll(this.dataset.roll)'>Disadvantage</button>
+                    <button class="button" id="dieBtn-6" data-roll="1d20"
+                        onclick='makeRoll(this.dataset.roll)'>d20</button>
+                    <button class="button" id="dieBtn-6" data-roll="2d20k1"
+                        onclick='makeRoll(this.dataset.roll)'>Advantage</button>
+                    <button class="button" id="dieBtn-6" data-roll="2d20k-1"
+                        onclick='makeRoll(this.dataset.roll)'>Disadvantage</button>
                 </div>
                 <div class="dice_box__row">
                     <button class="button" id="" onclick='makeGraph("3d6")'>Graph 3d6</button>
                     <button class="button" id="" onclick='makeGraph("4d6k3")'>Graph 4d6, drop 1</button>
                 </div>
             </div>
-        
-            <div class="dice_results box">
-                    <h2>Roll History</h2>
-                <div id="results" class="results"><pre id="messages" data-entries=1></pre></div>
-            </div>
-            <div class="box">
-                    <h2>Roll Graphs</h2>
+            <div class="graph_results box">
+                <h2>Graphs</h2>
                 <div id="graph_box"></div>
+            </div>
+
+            <div class="dice_results box">
+                <h2>Roll History</h2>
+                <div id="results" class="results">
+                    <pre id="messages" data-entries=1></pre>
+                </div>
             </div>
         </div>
         <footer>
-            Copyright &copy Max Leeming 2018
+            Copyright &copy Max Leeming 2018-2021
         </footer>
     </body>
+
 </html>

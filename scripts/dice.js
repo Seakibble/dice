@@ -17,19 +17,19 @@ function isNull(x) {
 function makeRoll(roll) {
     let messages = document.getElementById('messages');
 
-        let result = document.createElement("div");
-        result.classList.add("message");
-        
-        if (messages.scrollHeight - messages.clientHeight <= messages.scrollTop + 1) {
-            setTimeout(function() {
-                messages.scrollTop = messages.scrollHeight - messages.clientHeight;
-            }, 5);
-        }
+    let result = document.createElement("div");
+    result.classList.add("message");
 
-        messages.appendChild(result);       
+    if (messages.scrollHeight - messages.clientHeight <= messages.scrollTop + 1) {
+        setTimeout(function () {
+            messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+        }, 5);
+    }
 
-        result.innerHTML = "<span class='message__line_number'>" + messages.dataset.entries + "</span>" + roll + " -> <span class='message__result'>" + rollDice(roll) + "</span>";
-        messages.dataset.entries++;
+    messages.appendChild(result);
+
+    result.innerHTML = "<span class='message__line_number'>" + messages.dataset.entries + "</span>" + roll + " -> <span class='message__result'>" + rollDice(roll) + "</span>";
+    messages.dataset.entries++;
 }
 
 function makeGraph(roll, samples = 10000) {
@@ -38,55 +38,66 @@ function makeGraph(roll, samples = 10000) {
     let graphContainer = document.createElement("div");
     graphContainer.classList.add("graph_container");
 
-    // Heading
-    let heading = document.createElement("h3");
-    heading.innerText = roll + ", " + samples + " Samples";
+    // Number  Heading
+    let heading = document.createElement("span");
     heading.classList.add("graph__heading");
+    heading.innerText = "#";
     graphContainer.appendChild(heading);
 
-    // Graph itself
-    let result = document.createElement("div");
-    result.classList.add("graph");
-    graphContainer.appendChild(result);
+    // Frequency Heading
+    heading = document.createElement("span");
+    heading.classList.add("graph__heading");
+    heading.innerText = "Freq.";
+    graphContainer.appendChild(heading);
 
-    // X axis
-    let xAxis = document.createElement("div");
-    xAxis.classList.add("graph__x_axis");
-    graphContainer.appendChild(xAxis);
+    // Probability Heading
+    heading = document.createElement("span");
+    heading.classList.add("graph__heading");
+    heading.innerText = "%";
+    graphContainer.appendChild(heading);
 
-    let xAxisLabel = document.createElement("div");
-    xAxisLabel.classList.add("graph__x_axis_label");
-    xAxisLabel.innerText = "Dice Totals";
-    graphContainer.appendChild(xAxisLabel);
+    // Output Heading
+    heading = document.createElement("span");
+    heading.innerText = roll + ", " + samples + " Samples";
+    heading.classList.add("graph__heading");
+    heading.style.textAlign = "center";
+    let deleteButton = document.createElement("button");
+    deleteButton.innerText = "X";
+    deleteButton.style.float = 'right';
+    deleteButton.onclick = function () { this.closest('.graph_container').remove() };
+    heading.appendChild(deleteButton);
+    graphContainer.appendChild(heading);
 
     // Populate the Graph
-    let width = 100 / test.results.length;
     for (let i = 0; i < test.results.length; i++) {
-        let bar = document.createElement("div");
-        bar.classList.add("graph__bar");
-        bar.style.height = test.results[i][2] * 100 + "%";
-        bar.style.width = width + "%";
-
-        let barSpan = document.createElement("div");
-        barSpan.classList.add("graph__bar__span");
-        bar.appendChild(barSpan);
-        
-        let barNumber = document.createElement("div");
+        let barNumber = document.createElement("span");
         barNumber.classList.add("graph__bar__number");
         barNumber.innerText = test.results[i][0];
-        barNumber.style.width = width + "%";
-        xAxis.appendChild(barNumber);
+        graphContainer.appendChild(barNumber);
 
-        result.appendChild(bar);
+        barNumber = document.createElement("span");
+        barNumber.classList.add("graph__bar__number");
+        barNumber.innerText = test.results[i][1];
+        graphContainer.appendChild(barNumber);
+
+        barNumber = document.createElement("span");
+        barNumber.classList.add("graph__bar__number");
+        barNumber.innerText = Math.round(test.results[i][1] / samples * 100) / 100;
+        graphContainer.appendChild(barNumber);
+
+        let bar = document.createElement("span");
+        bar.classList.add("graph__bar");
+        bar.style.width = test.results[i][1] * 100 / samples + "%";
+        graphContainer.appendChild(bar);
     }
-    
+
     let graphBox = document.getElementById("graph_box");
     if (graphBox.scrollHeight - graphBox.clientHeight <= graphBox.scrollTop + 1) {
-        setTimeout(function() {
+        setTimeout(function () {
             graphBox.scrollTop = graphBox.scrollHeight - graphBox.clientHeight;
         }, 5);
     }
-    graphBox.appendChild(graphContainer);
+    graphBox.prepend(graphContainer);
 }
 
 function distTest(roll, samples = 10000) {
@@ -110,13 +121,13 @@ function distTest(roll, samples = 10000) {
         if (rolls[i] !== previous) {
             results.push([rolls[i], 1]);
         } else {
-            results[results.length-1][1]++;
+            results[results.length - 1][1]++;
         }
         previous = rolls[i];
     }
 
     // Reverse sort?
-    results.sort(function(a, b) {
+    results.sort(function (a, b) {
         return a[0] - b[0];
     });
 
@@ -142,7 +153,7 @@ function distTest(roll, samples = 10000) {
         let normalized = results[i][2];
     }
 
-    
+
     console.log(magnitude);
     return test;
 }
@@ -153,7 +164,7 @@ function roll(graph = false) {
 
     if (graph) {
         makeGraph(input.value);
-    } else {   
+    } else {
         makeRoll(input.value);
     }
 }
@@ -165,9 +176,19 @@ function rollDice(roll) {
     let keep = 0;
     let num = 0;
     let die = 0;
+    let exp = 0;
 
     if (isNumeric(roll)) {
         return roll;
+    }
+
+    if (roll.search("e") !== -1) {
+        roll = roll.split("e");
+        exp = roll[1];
+        if (isNull(exp) || num === "") {
+            exp = 0;
+        }
+        roll = roll[0];
     }
 
     if (roll.search("d") !== -1) {
@@ -201,12 +222,37 @@ function rollDice(roll) {
     total = 0;
     let rolls = [];
 
+    // roll the dice
     for (let i = 0; i < num; i++) {
         rolls.push(randomInt(1, die));
+
+        // check for explosions
+        if (exp != 0) {
+            let explodeDie = rolls[i];
+            if (exp.search("\\+") !== -1) { // X and up...
+                exp = parseInt(exp.split('\\+')[0], 10);
+                while (explodeDie >= exp) {
+                    explodeDie = randomInt(1, die);
+                    rolls[i] += explodeDie;
+                }
+            } else if (exp.search("-") !== -1) { // X and below...
+                exp = parseInt(exp.split('-')[0], 10);
+                while (explodeDie <= exp) {
+                    explodeDie = randomInt(1, die);
+                    rolls[i] += explodeDie;
+                }
+            } else { // Just equal to X
+                while (explodeDie == exp) {
+                    explodeDie = randomInt(1, die);
+                    rolls[i] += explodeDie;
+                }
+            }
+        }
+
     }
 
     if (keep !== num) {
-        if (0 < keep && keep < num) {            
+        if (0 < keep && keep < num) {
             // Keep dice
             rolls.sort(function (a, b) {
                 return (a - b);
